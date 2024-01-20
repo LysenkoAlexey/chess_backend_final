@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <meta charset="UTF-8">
+    <title>О турнире</title>
+    {% macro render_tournaments(relation) %}
+    {% set n = len(relation) %}
+
+    {% for i in range(n) %}
+    <li> <a href={{ url_for("about", tournament_number=relation.loc[i, "tournamentID"])}}> {{relation.loc[i, "tournament_name"]}}</a></li>
+    {% endfor %}
+    {% endmacro %}
+
+    {% macro render_cur_tournament(relation) %}
+    {% set n = len(relation) %}
+
+    {% for i in range(n) %}
+
+    <form action ="{{url_for('about', tournament_number=tournament_number)}}" method="get" >
+        <input type="hidden" name="tournament_number" value={{tournament_number}}>
+        <p>Название
+            <input type="text" name="name" value="{{relation.loc[i, 'tournament_name']}}">
+        </p>
+        <p>Дата начала
+            <input type="date" name="start_date" value="{{relation.loc[i, 'start_date']}}">
+        </p>
+        <p>Дата окончания
+            <input type="date" name="end_date" value="{{relation.loc[i, 'end_date']}}">
+        </p>
+        <p>Контроль
+            <input type="text" name="control" value="{{relation.loc[i, 'control']}}">
+        </p>
+        <p>Столы
+            <input type="number" name="tournament_tables" value="{{relation.loc[i, 'tournament_tables']}}">
+        </p>
+        <p>Система
+            <input type="number" name="system" value="{{relation.loc[i, 'FK_systemID']}}">
+        </p>
+        <p>Описание
+            <input type="text" name="description" value="{{relation.loc[i, 'tournament_description']}}">
+        </p>
+        <button type="submit" name="сохранить" value="сохранить">Сохранить</button>
+    </form>
+    {% endfor %}
+    {% endmacro %}
+
+
+
+    {% macro render_new_tournament() %}
+
+    <form action ="{{url_for('about', tournament_number=tournament_number)}}" method="get" >
+        <input type="hidden" name="tournament_number" >
+        <p>Название
+            <input type="text" name="name" >
+        </p>
+        <p>Дата начала
+            <input type="date" name="start_date" >
+        </p>
+        <p>Дата окончания
+            <input type="date" name="end_date" >
+        </p>
+        <p>Контроль
+            <input type="text" name="control" >
+        </p>
+        <p>Столы
+            <input type="number" name="tournament_tables" >
+        </p>
+        <p>Система
+            <input type="number" name="system" >
+        </p>
+        <p>Описание
+            <input type="text" name="description" >
+        </p>
+        <button type="submit" name="добавить" value="добавить">Добавить</button>
+    </form>
+    {% endmacro %}
+</head>
+<body>
+<div class="menu_main">
+    <div class="menu_tour"></div>
+    <div class=menu>
+    <ul>
+        <li> <a href={{url_for("index", tournament_number=tournament_number)}}>Участники</a> </li>
+        <li> <a href={{url_for("draw", tournament_number=tournament_number)}}>Туры</a> </li>
+        <li> <a href={{url_for("judges", tournament_number=tournament_number)}}>Судьи</a> </li>
+        <li> <a href={{url_for("about", tournament_number=tournament_number)}}>Турниры</a> </li>
+    </ul>
+    </div>
+    <div class="menu_tour">
+        {{render_tournaments(tournaments)}}
+        <li> <a href={{url_for("about", tournament_number=tournament_number, add_tournament="add")}}>Добавить турнир</a> </li>
+    </div>
+    <div class="menu_content">
+        {% if add == True %}
+        {{render_new_tournament()}}
+        {% else %}
+        {{render_cur_tournament(cur_tournament)}}
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

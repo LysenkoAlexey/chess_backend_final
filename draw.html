@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <title>Жеребьевка</title>
+    {% macro render_tournaments(relation) %}
+    {% set n = len(relation) %}
+    {% for i in range(n) %}
+    <li> <a href={{ url_for("draw", tournament_number=relation.loc[i, "tournamentID"])}}> {{relation.loc[i, "tournament_name"]}}</a></li>
+    {% endfor %}
+    {% endmacro %}
+
+    {% macro render_draw(relation) %}
+    {% set n = len(relation) %}
+    {% for i in range(n) %}
+
+    {% endfor %}
+    {% endmacro %}
+
+    {% macro render_draw(relation) %}
+    <p>
+    {% set n = len(relation) %}
+        <table>
+            <tr>
+                {% for name in relation.dtypes.index %}
+                <th>{{name}}</th>
+                {% endfor %}
+            </tr>
+            <tbody>
+            {% for i in range(n) %}
+            <tr>
+                {% for name in relation.dtypes.index %}
+                <td>
+                    {% if (relation.loc[i,name] == None or isnan(relation.loc[i,name])) %}
+                    <form action = "" method ="get">
+                        <input type="hidden" name = player1
+                               value={{relation.loc[i, 'Белые']}}>
+                        <input type="hidden" name = player2
+                               value={{relation.loc[i, 'Черные']}}>
+                        <input type="hidden" name = tournament_number
+                               value={{tournament_number}}>
+                        <input type="submit" name='res'value="1">
+                        <input type="submit" name='res'value="0.5">
+                        <input type="submit" name='res'value="0">
+                    </form>
+                    {% else %}
+                    {{relation.loc[i, name] }}
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </p>
+    {% endmacro %}
+</head>
+<body>
+<div class="menu_main">
+    <div class="menu_tour"></div>
+    <div class=menu>
+    <ul>
+        <li> <a href={{url_for("index", tournament_number=tournament_number)}}>Участники</a> </li>
+        <li> <a href={{url_for("draw", tournament_number=tournament_number)}}>Туры</a> </li>
+        <li> <a href={{url_for("judges", tournament_number=tournament_number)}}>Судьи</a> </li>
+        <li> <a href={{url_for("about", tournament_number=tournament_number)}}>Турниры</a> </li>
+    </ul>
+    </div>
+    <div class="menu_tour">
+        {{render_tournaments(tournaments)}}
+        <li> <a href={{url_for("about", tournament_number=tournament_number, add_tournament="add")}}>Добавить турнир</a> </li>
+    </div>
+    <div class="menu_content">
+        {{ render_draw(df_draw) }}
+
+        <button type="button" value='Новый тур' onclick="window.location.href='{{url_for('draw',tournament_number=tournament_number,state='добавить')}}'">Новый тур</button>
+    </div>
+</div>
+</body>
+</html>

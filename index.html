@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <meta charset="UTF-8">
+    <title>Участники</title>
+    {% macro render_players(relation) %}
+    <p>
+    {% set n = len(relation) %}
+        <table>
+            <tr>
+                {% for name in relation.dtypes.index %}
+                <th>{{name}}</th>
+                {% endfor %}
+            </tr>
+            <tbody>
+            {% for i in range(n) %}
+            <tr>
+                {% for name in relation.dtypes.index %}
+                <td>
+                    {{ relation.loc[i, name] }}
+                </td>
+                {% endfor %}
+                <td>
+                    <form action = "" method ="get">
+                        <input type="hidden" name = delete_player
+                               value={{relation.loc[i, 'FK_playerID']}}>
+                        <input type="hidden" name = tournament_number
+                               value={{tournament_number}}>
+                        <input type="submit" value="Удалить">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </p>
+    {% endmacro %}
+    {% macro render_tournaments(relation) %}
+    {% set n = len(relation) %}
+
+    {% for i in range(n) %}
+    <li> <a href={{ url_for("index", tournament_number=relation.loc[i, "tournamentID"])}}> {{relation.loc[i, "tournament_name"]}}</a></li>
+    {% endfor %}
+    {% endmacro %}
+
+    {% macro show_new_players(relation) %}
+    {% set n = len(relation) %}
+    {% for i in range(n) %}
+    <table>
+            <tbody>
+            {% for i in range(n) %}
+            <tr>
+                {% for name in relation.dtypes.index %}
+                <td>
+                    {{ relation.loc[i, name] }}
+                </td>
+                {% endfor %}
+                <td>
+                    <form action = "" method ="get">
+                        <input type="hidden" name = add_player
+                               value={{relation.loc[i, 'playerID']}}>
+                        <input type="hidden" name = tournament_number
+                               value={{tournament_number}}>
+                        <input type="submit" value="Внести">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+    {% endmacro %}
+</head>
+<body>
+<div class="menu_main">
+    <div class="menu_tour"></div>
+    <div class=menu>
+    <ul>
+        <li> <a href={{url_for("index", tournament_number=tournament_number)}}>Участники</a> </li>
+        <li> <a href={{url_for("draw", tournament_number=tournament_number)}}>Туры</a> </li>
+        <li> <a href={{url_for("judges", tournament_number=tournament_number)}}>Судьи</a> </li>
+        <li> <a href={{url_for("about", tournament_number=tournament_number)}}>Турниры</a> </li>
+    </ul>
+    </div>
+    <div class="menu_tour">
+        {{render_tournaments(tournaments)}}
+        <li> <a href={{url_for("about", tournament_number=tournament_number, add_tournament="add")}}>Добавить турнир</a> </li>
+    </div>
+    <div class="menu_content">
+        {{ render_players(tournament_players) }}
+        {% if find_player == True %}
+        <form action ="{{url_for('index', tournament_number=tournament_number)}}" method="get" >
+            <input type="hidden" name="tournament_number" value={{tournament_number}}>
+            <p>ФИО
+            <input type="text" name="FIO">
+            </p>
+            <p>Дата рождения
+            <input type="date" name="datebirth">
+            </p>
+            <button type="submit" name="сохранить" value="сохранить">Сохранить</button>
+            <button type="submit" name="найти" value="найти">Найти по ФИО</button>
+        </form>
+        {% endif %}
+
+        {% if searcher %}
+        {{ show_new_players(new_players) }}
+        {% endif %}
+        <button type="button" value='Добавить' onclick="window.location.href='{{url_for('index',tournament_number=tournament_number,state='добавить')}}'">Добавить</button>
+    </div>
+</div>
+
+</body>
+</html>
